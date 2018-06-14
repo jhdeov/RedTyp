@@ -13,11 +13,11 @@ Computational morphologists can utilize our database to retrieve computational m
 
 Typological morphologists can utilize our database to get a rough picture on the typology of reduplication. 
 
-More information on how 2-way FSTs work can be found in the manuscript submission to COLING 2018 titled "RedTyp: A Database of Reduplicative Morpho-phonology with Computational Models".
+More information on how 2-way FSTs work can be found in Filiot & Reynier (2016, "Transducers, logic and algebra for functions of finite words").
 
-Author names are anonymous 
+Author names are (anonymous. 
 
-This folder contains the following three files:
+This repository contains the following  files:
 1. An SQL file "RedTyp.sql" which is a copy of the SQL database, RedTyp
 2. A python file "two_way_interpreter.py" which can interpret the 2-way FST recipes that are found in RedTyp
 3. A markdown file "README.md" which is the README file
