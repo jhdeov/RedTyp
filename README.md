@@ -21,7 +21,8 @@ This repository contains the following  files:
 1. An SQL file "RedTyp.sql" which is a copy of the SQL database, RedTyp
 2. A python file "two_way_interpreter.py" which can interpret the 2-way FST recipes that are found in RedTyp
 3. A markdown file "README.md" which is the README file
-4. A markdown file "instructions_on_recipe_creation.md" which has instructions on how to read and create 2-way FST recipes that can be interpreted by our python interpreter
+4. A license file "LICENSE.md"
+5. A markdown file "instructions_on_recipe_creation.md" which has instructions on how to read and create 2-way FST recipes that can be interpreted by our python interpreter
 
 The SQL database was created with phpmyadmin and it can imported into any SQL server.
 
