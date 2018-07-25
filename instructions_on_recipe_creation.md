@@ -201,7 +201,7 @@ With this altered transitional arc, the 2-way FST will now voice the initial con
 
 The python interpreter will implement the modified 2-way FST recipe and create a "output_strings.txt" file which contains the following:
 
->> pata	-->	bip\a~pata\
+>> pata	-->	bipa\~pata\
 		pataka	-->	bipa\~pataka\
 		apata	-->	 --- there was an error because couldn't find output state for the input state+input symbol pair (output first C,a)\
 		taka	-->	dita\~taka
