@@ -192,7 +192,7 @@ into:
 		
 Note how the output string portion of the arc has to be flanked by brackets []\
 
-With this altered transitional arc, the 2-way FST will now voice the initial consonant, add a vowel 'i', and make another copy of the consonant without voicing it.For example for the input strings:
+With this altered transitional arc, the 2-way FST will now voice the initial consonant, add a vowel 'i', and make another copy of the consonant without voicing it. For example for the input strings:
 
 >>pata\
 		pataka\
