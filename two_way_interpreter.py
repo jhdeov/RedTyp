@@ -15,7 +15,7 @@ import io
 import codecs
 
 def simplifyLines (lines):
-	"""this removes lines which start with a comment symbol %, or which are just whitespace/empty lines"""
+	"""Removes lines which start with a comment symbol %, or which are just whitespace/empty lines"""
 	newlines=[]
 	for line in lines:
 		temp=line.strip()
@@ -24,12 +24,15 @@ def simplifyLines (lines):
 	return newlines
 	
 def breakLineofForm_Alphabet_type_eq_IntStrChar(line):
-	"""a lot of inputs are of the form "variable = value" where value ranges from a string to an integer
-	I just want to see whats on the right of the equation symbol"""
+	"""A lot of inputs are of the form "variable = value" where value ranges from a string to an integer
+	We just need to see whats on the right of the equation symbol
+	This will extract that"""
 	return line.split('=')[1].strip()
 
 def getListofItems(line):
-	"""a lot of inputs are of the form "variable = [ 'a', 'b', 'c'] where the value is a list of strings. i want that list. i assume the list values do not include [] or '' or "" """
+	"""A lot of inputs are of the form "variable = [ 'a', 'b', 'c'] where the value is a list of strings. 
+	We need that list. This extracts that list.
+	I assume the list values do not include [] or '' or "" """
 	rightpart=line.split(']')[0].split('[')[1].split(',')
 	refinedRightPart=[]
 	for mid in rightpart:
@@ -37,8 +40,9 @@ def getListofItems(line):
 	return refinedRightPart
 	
 def getListofItems_nospace(line):
-	"""a lot of inputs are of the form "variable = [ 1, 2, 3] where the value is a list of integers or really anything without quotation marks. 
-	i want that list. i assume the list values do not include [] or '' or "" """
+	"""A lot of inputs are of the form "variable = [ 1, 2, 3] where the value is a list of integers or really anything without quotation marks. 
+	We need that list. 
+	I assume the list values do not include [] or '' or "" """
 	rightpart=line.split(']')[0].split('[')[1].split(',')
 	refinedRightPart=[]
 	for mid in rightpart:
@@ -46,14 +50,14 @@ def getListofItems_nospace(line):
 	return refinedRightPart
 
 def subalphabetCreator1by1(line):
-	"""returns a tuple (string,list of strings)
-	an example is ('consonants', ['p', 't']) """
+	"""Returns a tuple (string,list of strings)
+	An example is ('consonants', ['p', 't']) """
 	right=getListofItems(line)
 	left=line.split('=')[0].strip()
 	return (left,right)
 
 def subalphabetCreatorIter(lines):
-	"""returns a list of subalphabets which are exemplified above"""
+	"""Returns a list of subalphabets which are exemplified above"""
 	subalphabets=[]
 	for line in lines:
 		subalphabet=subalphabetCreator1by1(line)
@@ -62,18 +66,20 @@ def subalphabetCreatorIter(lines):
 	return subalphabets
 
 def functionCreator1by1(line):
-	"""returns a tuple of the form (string, dict) where string is the name of the function
-	and where the dict is of the form { string:string}
-	an example input is diphthongReduce = { ('A','a'), ('E','e') }
-	an example output is ('dipthongReduce', {'A':'a','E':'e'}) 
+	"""Returns a tuple of the form (string, dict) where string is the name of the function
+	and where the dict is of the form { string:string}.
+	An example input is diphthongReduce = { ('A','a'), ('E','e') }
+	An example output is ('dipthongReduce', {'A':'a','E':'e'}) 
 	"""
 	line=line.strip().split('=')
 	leftpart=line[0].strip()
 	rightpart=line[1].split('}')[0].split('{')[1].strip()
-	#im just gonna use regex here to make my life eaasier because of the () embeddings
-	tuples=re.findall('\(.*?\)',rightpart)	#this will get a list of form [('A,'a'),('B','b')], this list is a list of strings
+
+	"""This will get a list of form [('A,'a'),('B','b')], this list is a list of strings"""
+	tuples=re.findall('\(.*?\)',rightpart)
 	refinedtuples=[]
-	for tuple in tuples: #this will convert the list into a list of tuples of strings
+	for tuple in tuples: 
+		"""This will convert the list into a list of tuples of strings"""
 		refinedtuple=re.findall('\'.*?\'',tuple)
 		refinedtuple=(refinedtuple[0][1:-1],refinedtuple[1][1:-1])
 		refinedtuples.append(refinedtuple) 
@@ -82,9 +88,9 @@ def functionCreator1by1(line):
 
 
 def functionCreatorIter(lines,alphabetList):
-	""" returns a big dictionary of dictionaries to model the functions
+	""" Returns a big dictionary of dictionaries to model the functions
 	for example { 'ID':{'a':'a','A':'A'}, 'dipthongReduce':{'A':'A'}}
-	we include the ID function here"""
+	We include the ID function here"""
 	functions=[]
 	for line in lines:
 		function=functionCreator1by1(line)
@@ -99,12 +105,13 @@ def functionCreatorIter(lines,alphabetList):
 	return dict(functions)
 
 def transitionCreator1by1(line):
-	"""given a line of the form "(stateQ,inputA)=(stateP,outputB,direction')"
-	this function will parse it into a 5-tuple
-	i assume the states are flanked by '' and that they do not contain paranthesses or commas or ''
-	the input/output are either strings like 'A' which do not include (), or commas or '' OR they are of the form \\string such as \\alphabet
+	"""Given a line of the form "(stateQ,inputA)=(stateP,outputB,direction')"
+	This function will parse it into a 5-tuple
+	I assume the states are flanked by '' and that they do not contain paranthesses or commas or ''
+	The input/output are either strings like 'A' which do not include (), or commas or '' OR they are of the form \\string such as \\alphabet
 	
-	i do not debug for wrong states/symbols here but in the delta function"""
+	I do not debug for wrong states/symbols here but in the delta function"""
+	
 	transitionEntry=line.strip()
 	try:
 		
@@ -173,8 +180,8 @@ class Reader:
 			if lines[0][0]==u'\ufeff':
 				lines[0]=lines[0][1:]#utf8 texts start with the byte encoding symbol, remove it
 			
-			self.name=lines[0][1:].strip()#this gets the first line of the FST recipe assuming its the name of the FST
-
+			"""This gets the first line of the FST recipe assuming its the name of the FST"""
+			self.name=lines[0][1:].strip()
 			self.lines=simplifyLines(lines)
 			#print ("ok time to process strings")
 			self.processLines()
@@ -203,19 +210,13 @@ class Reader:
 	def processLines(self):
 		currentLineIndex=0
 		
-		"""I never needed this alphabet type, so ill just comment it out"""
-		#self.line_alphabetType=self.lines[currentLineIndex]
-		#self.alphabetType=breakLineofForm_Alphabet_type_eq_IntStrChar(self.line_alphabetType)
-		#currentLineIndex=currentLineIndex+1
-		#print "below alphabetType"
-		#print self.line_alphabetType
-		#print '\t',self.alphabetType
+
 		
-		"""this checks if the user is using my default alphabet/subalphabet or if hes defining his own
-		if he typed "user", then he will define his own alphabet
-		if he typed "default ipa", then he will use the alphabet I already have for consonants vs vowels
-		he likewise cannot use functions
-		if he typed "simple ipa", then he will use the smaller alphabet I already have for consonants vs vowels 
+		"""This checks if the user is using my default alphabet/subalphabet or if hes defining his own
+		If he typed "user", then he will define his own alphabet
+		If he typed "default ipa", then he will use the alphabet I already have for consonants vs vowels
+		He likewise cannot use functions
+		If he typed "simple ipa", then he will use the smaller alphabet I already have for consonants vs vowels 
 		which are  mostly characters found on the keyboard plus the IPA symbols for length and stress
 		
 		"""
@@ -224,12 +225,12 @@ class Reader:
 		currentLineIndex=currentLineIndex+1
 		
 		if self.default_alphabet_wanted=="default ipa":
-			self.subalphabetCount=4
+			self.subalphabetCount=6
 			consonants=['p', 'b', 'ɸ', 'β', 'm', 'ʙ', 'p͡f', 'f', 'v', 'ɱ', 'ʋ', 't̪', 'd̪', 'θ', 'ð', 't', 'd', 't͡s', 'd͡z', 't͡ɬ', 's', 'z', 't̪ˤ', 'd̪ˤ', 'θˤ', 'ðˤ', 'tˤ', 'dˤ', 'sˤ', 'zˤ', 'n', 'l', 'ɬ', 'ɮ', 'ɾ', 'ɺ', 'r', 'ʧ', 'ʤ', 'ʃ', 'ʒ', 'ɹ', 'ʈ', 'ɖ', 'ʂ', 'ʐ', 'ɳ', 'ɭ', 'ɽ', 'ɻ', 'k̘', 'g̘', 'ɡ̘', 'x̘', 'j', 'k', 'g', 'ɡ', 'ŋ', 'k͡x', 'x', 'ɣ', 'ʟ', 'k̙', 'g̙', 'ɡ̙', 'x̙', 'ɣ̙', 'q', 'ɢ', 'χ', 'ʁ', 'ɴ', 'ʀ', 'ħ', 'ʕ', 'ʔ', 'h', 'ɦ', 'w', 'ʍ', 'k͡p', 'ɡ͡b', 'ɥ', 't͡ɕ', 'd͡ʑ', 'ɕ', 'ʑ', 'c', 'ɟ', 'ç', 'ʝ', 'ɲ', 'ʎ', 'pː', 'bː', 'ɸː', 'βː', 'mː', 'ʙː', 'p͡fː', 'fː', 'vː', 'ɱː', 'ʋː', 't̪ː', 'd̪ː', 'θː', 'ðː', 'tː', 'dː', 't͡sː', 'd͡zː', 't͡ɬː', 'sː', 'zː', 't̪ˤː', 'd̪ˤː', 'θˤː', 'ðˤː', 'tˤː', 'dˤː', 'sˤː', 'zːˤ', 'nː', 'lː', 'ɬː', 'ɮː', 'ɾː', 'ɺː', 'rː', 'ʧː', 'ʤː', 'ʃː', 'ʒː', 'ɹː', 'ʈː', 'ɖː', 'ʂː', 'ʐː', 'ɳː', 'ɭː', 'ɽː', 'ɻː', 'k̘ː', 'g̘ː', 'ɡ̘ː', 'x̘ː', 'jː', 'kː', 'gː', 'ɡː', 'ŋː', 'k͡xː', 'xː', 'ɣː', 'ʟː', 'k̙ː', 'g̙ː', 'ɡ̙ː', 'x̙ː', 'ɣ̙ː', 'qː', 'ɢː', 'χː', 'ʁː', 'ɴː', 'ʀː', 'ħː', 'ʕː', 'ʔː', 'hː', 'ɦː', 'wː', 'ʍː', 'k͡pː', 'ɡ͡bː', 'ɥː', 't͡ɕː', 'd͡ʑː', 'ɕː', 'ʑː', 'cː', 'ɟː', 'çː', 'ʝː', 'ɲː', 'ʎː']
 			vowels=['i', 'y', 'ɨ', 'ʉ', 'ɯ', 'u', 'ɪ', 'ʏ', 'ʊ', 'e', 'ø', 'ɘ', 'ɵ', 'ɤ', 'o', 'ɛ', 'œ', 'ɚ', 'ə', 'ɞ', 'ʌ', 'ɔ', 'æ', 'ɶ', 'a', 'ɑ', 'ɒ', 'ĩ', 'ỹ', 'ɨ̃', 'ʉ̃', 'ɯ̃', 'ũ', 'ɪ̃', 'ʏ̃', 'ʊ̃', 'ẽ', 'ø̃', 'ɘ̃', 'ɵ̃', 'ɤ̃', 'õ', 'ɛ̃', 'œ̃', 'ə̃', 'ɞ̃', 'ʌ̃', 'ɔ̃', 'æ̃', 'ɶ̃', 'ã', 'ɑ̃', 'ɒ̃', 'iː', 'yː', 'ɨː', 'ʉː', 'ɯː', 'uː', 'ɪː', 'ʏː', 'ʊː', 'eː', 'øː', 'ɘː', 'ɵː', 'ɤː', 'oː', 'ɛː', 'œː', 'ɚː', 'əː', 'ɞː', 'ʌː', 'ɔː', 'æː', 'ɶː', 'aː', 'ɑː', 'ɒː', 'ĩː', 'ỹː', 'ɨ̃ː', 'ʉ̃ː', 'ɯ̃ː', 'ũː', 'ɪ̃ː', 'ʏ̃ː', 'ʊ̃ː', 'ẽː', 'ø̃ː', 'ɘ̃ː', 'ɵ̃ː', 'ɤ̃ː', 'õː', 'ɛ̃ː', 'œ̃ː', 'ə̃ː', 'ɞ̃ː', 'ʌ̃ː', 'ɔ̃ː', 'æ̃ː', 'ɶ̃ː', 'ãː', 'ɑ̃ː', 'ɒ̃ː', 'ˈi', 'ˈy', 'ˈɨ', 'ˈʉ', 'ˈɯ', 'ˈu', 'ˈɪ', 'ˈʏ', 'ˈʊ', 'ˈe', 'ˈø', 'ˈɘ', 'ˈɵ', 'ˈɤ', 'ˈo', 'ˈɛ', 'ˈœ', 'ˈɚ', 'ˈə', 'ˈɞ', 'ˈʌ', 'ˈɔ', 'ˈæ', 'ˈɶ', 'ˈa', 'ˈɑ', 'ˈɒ', 'ˈĩ', 'ˈỹ', 'ˈɨ̃', 'ˈʉ̃', 'ˈɯ̃', 'ˈũ', 'ˈɪ̃', 'ˈʏ̃', 'ˈʊ̃', 'ˈẽ', 'ˈø̃', 'ˈɘ̃', 'ˈɵ̃', 'ˈɤ̃', 'ˈõ', 'ˈɛ̃', 'ˈœ̃', 'ˈə̃', 'ˈɞ̃', 'ˈʌ̃', 'ˈɔ̃', 'ˈæ̃', 'ˈɶ̃', 'ˈã', 'ˈɑ̃', 'ˈɒ̃', 'ˈiː', 'ˈyː', 'ˈɨː', 'ˈʉː', 'ˈɯː', 'ˈuː', 'ˈɪː', 'ˈʏː', 'ˈʊː', 'ˈeː', 'ˈøː', 'ˈɘː', 'ˈɵː', 'ˈɤː', 'ˈoː', 'ˈɛː', 'ˈœː', 'ˈɚː', 'ˈəː', 'ˈɞː', 'ˈʌː', 'ˈɔː', 'ˈæː', 'ˈɶː', 'ˈaː', 'ˈɑː', 'ˈɒː', 'ˈĩː', 'ˈỹː', 'ˈɨ̃ː', 'ˈʉ̃ː', 'ˈɯ̃ː', 'ˈũː', 'ˈɪ̃ː', 'ˈʏ̃ː', 'ˈʊ̃ː', 'ˈẽː', 'ˈø̃ː', 'ˈɘ̃ː', 'ˈɵ̃ː', 'ˈɤ̃ː', 'ˈõː', 'ˈɛ̃ː', 'ˈœ̃ː', 'ˈə̃ː', 'ˈɞ̃ː', 'ˈʌ̃ː', 'ˈɔ̃ː', 'ˈæ̃ː', 'ˈɶ̃ː', 'ˈãː', 'ˈɑ̃ː', 'ˈɒ̃ː', 'ˌi', 'ˌy', 'ˌɨ', 'ˌʉ', 'ˌɯ', 'ˌu', 'ˌɪ', 'ˌʏ', 'ˌʊ', 'ˌe', 'ˌø', 'ˌɘ', 'ˌɵ', 'ˌɤ', 'ˌo', 'ˌɛ', 'ˌœ', 'ˌɚ', 'ˌə', 'ˌɞ', 'ˌʌ', 'ˌɔ', 'ˌæ', 'ˌɶ', 'ˌa', 'ˌɑ', 'ˌɒ', 'ˌĩ', 'ˌỹ', 'ˌɨ̃', 'ˌʉ̃', 'ˌɯ̃', 'ˌũ', 'ˌɪ̃', 'ˌʏ̃', 'ˌʊ̃', 'ˌẽ', 'ˌø̃', 'ˌɘ̃', 'ˌɵ̃', 'ˌɤ̃', 'ˌõ', 'ˌɛ̃', 'ˌœ̃', 'ˌə̃', 'ˌɞ̃', 'ˌʌ̃', 'ˌɔ̃', 'ˌæ̃', 'ˌɶ̃', 'ˌã', 'ˌɑ̃', 'ˌɒ̃', 'ˌiː', 'ˌyː', 'ˌɨː', 'ˌʉː', 'ˌɯː', 'ˌuː', 'ˌɪː', 'ˌʏː', 'ˌʊː', 'ˌeː', 'ˌøː', 'ˌɘː', 'ˌɵː', 'ˌɤː', 'ˌoː', 'ˌɛː', 'ˌœː', 'ˌɚː', 'ˌəː', 'ˌɞː', 'ˌʌː', 'ˌɔː', 'ˌæː', 'ˌɶː', 'ˌaː', 'ˌɑː', 'ˌɒː', 'ˌĩː', 'ˌỹː', 'ˌɨ̃ː', 'ˌʉ̃ː', 'ˌɯ̃ː', 'ˌũː', 'ˌɪ̃ː', 'ˌʏ̃ː', 'ˌʊ̃ː', 'ˌẽː', 'ˌø̃ː', 'ˌɘ̃ː', 'ˌɵ̃ː', 'ˌɤ̃ː', 'ˌõː', 'ˌɛ̃ː', 'ˌœ̃ː', 'ˌə̃ː', 'ˌɞ̃ː', 'ˌʌ̃ː', 'ˌɔ̃ː', 'ˌæ̃ː', 'ˌɶ̃ː', 'ˌãː', 'ˌɑ̃ː', 'ˌɒ̃ː']
 			short_vowels=['i', 'y', 'ɨ', 'ʉ', 'ɯ', 'u', 'ɪ', 'ʏ', 'ʊ', 'e', 'ø', 'ɘ', 'ɵ', 'ɤ', 'o', 'ɛ', 'œ', 'ɚ', 'ə', 'ɞ', 'ʌ', 'ɔ', 'æ', 'ɶ', 'a', 'ɑ', 'ɒ', 'ĩ', 'ỹ', 'ɨ̃', 'ʉ̃', 'ɯ̃', 'ũ', 'ɪ̃', 'ʏ̃', 'ʊ̃', 'ẽ', 'ø̃', 'ɘ̃', 'ɵ̃', 'ɤ̃', 'õ', 'ɛ̃', 'œ̃', 'ə̃', 'ɞ̃', 'ʌ̃', 'ɔ̃', 'æ̃', 'ɶ̃', 'ã', 'ɑ̃', 'ɒ̃', 'ˈi', 'ˈy', 'ˈɨ', 'ˈʉ', 'ˈɯ', 'ˈu', 'ˈɪ', 'ˈʏ', 'ˈʊ', 'ˈe', 'ˈø', 'ˈɘ', 'ˈɵ', 'ˈɤ', 'ˈo', 'ˈɛ', 'ˈœ', 'ˈɚ', 'ˈə', 'ˈɞ', 'ˈʌ', 'ˈɔ', 'ˈæ', 'ˈɶ', 'ˈa', 'ˈɑ', 'ˈɒ', 'ˈĩ', 'ˈỹ', 'ˈɨ̃', 'ˈʉ̃', 'ˈɯ̃', 'ˈũ', 'ˈɪ̃', 'ˈʏ̃', 'ˈʊ̃', 'ˈẽ', 'ˈø̃', 'ˈɘ̃', 'ˈɵ̃', 'ˈɤ̃', 'ˈõ', 'ˈɛ̃', 'ˈœ̃', 'ˈə̃', 'ˈɞ̃', 'ˈʌ̃', 'ˈɔ̃', 'ˈæ̃', 'ˈɶ̃', 'ˈã', 'ˈɑ̃', 'ˈɒ̃', 'ˌi', 'ˌy', 'ˌɨ', 'ˌʉ', 'ˌɯ', 'ˌu', 'ˌɪ', 'ˌʏ', 'ˌʊ', 'ˌe', 'ˌø', 'ˌɘ', 'ˌɵ', 'ˌɤ', 'ˌo', 'ˌɛ', 'ˌœ', 'ˌɚ', 'ˌə', 'ˌɞ', 'ˌʌ', 'ˌɔ', 'ˌæ', 'ˌɶ', 'ˌa', 'ˌɑ', 'ˌɒ', 'ˌĩ', 'ˌỹ', 'ˌɨ̃', 'ˌʉ̃', 'ˌɯ̃', 'ˌũ', 'ˌɪ̃', 'ˌʏ̃', 'ˌʊ̃', 'ˌẽ', 'ˌø̃', 'ˌɘ̃', 'ˌɵ̃', 'ˌɤ̃', 'ˌõ', 'ˌɛ̃', 'ˌœ̃', 'ˌə̃', 'ˌɞ̃', 'ˌʌ̃', 'ˌɔ̃', 'ˌæ̃', 'ˌɶ̃', 'ˌã', 'ˌɑ̃', 'ˌɒ̃']
 			long_vowels=['iː', 'yː', 'ɨː', 'ʉː', 'ɯː', 'uː', 'ɪː', 'ʏː', 'ʊː', 'eː', 'øː', 'ɘː', 'ɵː', 'ɤː', 'oː', 'ɛː', 'œː', 'ɚː', 'əː', 'ɞː', 'ʌː', 'ɔː', 'æː', 'ɶː', 'aː', 'ɑː', 'ɒː', 'ĩː', 'ỹː', 'ɨ̃ː', 'ʉ̃ː', 'ɯ̃ː', 'ũː', 'ɪ̃ː', 'ʏ̃ː', 'ʊ̃ː', 'ẽː', 'ø̃ː', 'ɘ̃ː', 'ɵ̃ː', 'ɤ̃ː', 'õː', 'ɛ̃ː', 'œ̃ː', 'ə̃ː', 'ɞ̃ː', 'ʌ̃ː', 'ɔ̃ː', 'æ̃ː', 'ɶ̃ː', 'ãː', 'ɑ̃ː', 'ɒ̃ː', 'ˈiː', 'ˈyː', 'ˈɨː', 'ˈʉː', 'ˈɯː', 'ˈuː', 'ˈɪː', 'ˈʏː', 'ˈʊː', 'ˈeː', 'ˈøː', 'ˈɘː', 'ˈɵː', 'ˈɤː', 'ˈoː', 'ˈɛː', 'ˈœː', 'ˈɚː', 'ˈəː', 'ˈɞː', 'ˈʌː', 'ˈɔː', 'ˈæː', 'ˈɶː', 'ˈaː', 'ˈɑː', 'ˈɒː', 'ˈĩː', 'ˈỹː', 'ˈɨ̃ː', 'ˈʉ̃ː', 'ˈɯ̃ː', 'ˈũː', 'ˈɪ̃ː', 'ˈʏ̃ː', 'ˈʊ̃ː', 'ˈẽː', 'ˈø̃ː', 'ˈɘ̃ː', 'ˈɵ̃ː', 'ˈɤ̃ː', 'ˈõː', 'ˈɛ̃ː', 'ˈœ̃ː', 'ˈə̃ː', 'ˈɞ̃ː', 'ˈʌ̃ː', 'ˈɔ̃ː', 'ˈæ̃ː', 'ˈɶ̃ː', 'ˈãː', 'ˈɑ̃ː', 'ˈɒ̃ː', 'ˌiː', 'ˌyː', 'ˌɨː', 'ˌʉː', 'ˌɯː', 'ˌuː', 'ˌɪː', 'ˌʏː', 'ˌʊː', 'ˌeː', 'ˌøː', 'ˌɘː', 'ˌɵː', 'ˌɤː', 'ˌoː', 'ˌɛː', 'ˌœː', 'ˌɚː', 'ˌəː', 'ˌɞː', 'ˌʌː', 'ˌɔː', 'ˌæː', 'ˌɶː', 'ˌaː', 'ˌɑː', 'ˌɒː', 'ˌĩː', 'ˌỹː', 'ˌɨ̃ː', 'ˌʉ̃ː', 'ˌɯ̃ː', 'ˌũː', 'ˌɪ̃ː', 'ˌʏ̃ː', 'ˌʊ̃ː', 'ˌẽː', 'ˌø̃ː', 'ˌɘ̃ː', 'ˌɵ̃ː', 'ˌɤ̃ː', 'ˌõː', 'ˌɛ̃ː', 'ˌœ̃ː', 'ˌə̃ː', 'ˌɞ̃ː', 'ˌʌ̃ː', 'ˌɔ̃ː', 'ˌæ̃ː', 'ˌɶ̃ː', 'ˌãː', 'ˌɑ̃ː', 'ˌɒ̃ː']
-			boundaries = ['.']
+			boundaries = ['-','+','.']
 			segments=consonants+vowels
 			self.alphabetList=segments+boundaries 
 			self.subalphabets=[("consonants",consonants),("vowels",vowels),("alphabet",self.alphabetList),("long_vowels",long_vowels),("short_vowels",short_vowels), ("boundaries",boundaries),("segments",segments)]
@@ -238,14 +239,14 @@ class Reader:
 			#print ("below subalphabetCount")
 			#print ('\t',self.subalphabetCount)
 		if self.default_alphabet_wanted=="keyboard ipa":
-			self.subalphabetCount=2
+			self.subalphabetCount=8
 			consonants = ['p','t','k','b','d','g','m','n','f','v','s','z','x','h','r','l','w','j','c','q']
 			vowels = ['a','e','i','o','u','y', '`a','`e','`i','`o','`u','`y', '`a:','`e:','`i:','`o:','`u:','`y:', 'a:','e:','i:','o:','u:','y:']  
 			long_vowels = ['`a:','`e:','`i:','`o:','`u:','`y:', 'a:','e:','i:','o:','u:','y:']
 			short_vowels = ['a','e','i','o','u','y', '`a','`e','`i','`o','`u','`y']
 			stressed_vowels = ['`a','`e','`i','`o','`u','`y', '`a:','`e:','`i:','`o:','`u:','`y:']
 			unstressed_vowels =['a','e','i','o','u','y',  'a:','e:','i:','o:','u:','y:']
-			boundaries = ['+','.']
+			boundaries = ['-','+','.']
 			segments = consonants + vowels 
 			self.alphabetList=consonants + vowels + boundaries
 			self.subalphabets=[("consonants",consonants),("vowels",vowels),("alphabet",self.alphabetList),("short_vowels",short_vowels),("long_vowels",long_vowels),("stressed_vowels",stressed_vowels),("unstressed_vowels",unstressed_vowels), ("boundaries",boundaries),("segments",segments)]
@@ -324,12 +325,6 @@ class Reader:
 		
 	
 		
-		"""I never needed this state type, so ill just comment it out"""
-		#self.line_stateType=self.lines[currentLineIndex]
-		#self.stateType=breakLineofForm_Alphabet_type_eq_IntStrChar(self.line_stateType)
-		#currentLineIndex=currentLineIndex+1
-		#print "stateType"
-		#print '\t',self.stateType
 
 		self.line_stateList=self.lines[currentLineIndex]
 		self.stateList=getListofItems(self.line_stateList)
@@ -363,9 +358,9 @@ class Reader:
 		#	print ('\t',trans)
 			
 	def transitionSubPartsCreator(self):
-		"""given a list of edges or 5-tuples (q,a,p,b,d)
-		this function breaks the 5-tuples into 3 functions such that given q,a it will return p and b and d
-		i debug for erronous state or symbol entries here"""
+		"""Given a list of edges or 5-tuples (q,a,p,b,d)
+		This function breaks the 5-tuples into 3 functions such that given q,a it will return p and b and d
+		I debug for erronous state or symbol entries here"""
 		self.deltaState={}
 		self.deltaOutput={}
 		self.deltaDirection={}
@@ -414,8 +409,8 @@ class Reader:
 					expandedInputA=alphItems
 				
 				elif inputA[0]=='{':
-					"""assume that if the input is a of form {}, then the person wants to do a set difference: alphabet - a
-					for now I assume the first element is always of form \\alphabet and the second is either a single symbol or a subalphabet
+					"""Assume that if the input is a of form {}, then the person wants to do a set difference: alphabet - a
+					For now I assume the first element is always of form \\alphabet and the second is either a single symbol or a subalphabet
 					
 					We should potentially replace this with somehow making the two-way reader read the transitions by ordering the subalphabets"""
 					inside_parts=inputA[1:-1].split('-')
@@ -650,16 +645,16 @@ class Reader:
 		
 		"""We determine whether the input is in the form of a list, a string of characters separated by whitespace, or just a string without whitespace"""
 		if ( type(input_string)==str) and " " in input_string:#type(input_string)==unicode or -- bugs
-		#	print("yes space")
-			input_string=input_string.split()
+		 	#print("yes space")
+		 	input_string=input_string.split()
 		if type(input_string)==str:#type(input_string)==unicode or  bugs
-		#	print("no space")
-			input_string=input_string.strip()
-			input_string="#"+input_string+"%"
+		 	#print("no space")
+		 	input_string=input_string.strip()
+		 	input_string="#"+input_string+"%"
 		elif type(input_string)==list:
-		#	print ("ok..")
+			print ("ok..")
 			input_string=["#"]+input_string+["%"]
-			#print (input_string)
+			print (input_string)
 			#if you want to output a list of symbols, not a string, then uncomment the below
 			#if type(initialValue)==str:
 			#	initialValue=[initialValue]
@@ -667,7 +662,7 @@ class Reader:
 		return self.run(initialState,initialValue,input_string,0)
 		
 	def output_strings_file(self,input_string_file):
-		"""given a file with a list of input strings, this processes each input string and prints it out onto the output file"""
+		"""Given a file with a list of input strings, this processes each input string and prints it out onto the output file"""
 		f_input=codecs.open(input_string_file,'r','utf-8')#io.open(input_string_file,'r',encoding='utf-8')
 		f_output=codecs.open('output_strings.txt','w','utf-8')#io.open('output_strings.txt','w',encoding='utf-8')
 		input_lines=f_input.readlines()
@@ -680,12 +675,12 @@ class Reader:
 		f_output.close()
 		
 	def read_transition_list(self,transition_file):
-		"""Note to self, make input vs output alphabet"""
 		"""This takes as input a list of lines such that:
 			1st line is of the form: initial states = [ 1,2,3]
 			2nd line is of the form: final states = [ 1,2,3]
 			all other lines have the template: input state, input symbol, output state, output string, direction
 				e.g. : 2,a,3,aa,+1
+			Note, both the input and output have the same alphabet
 		"""
 		#print('eh')
 		self.input_alphabet=set([]) 
