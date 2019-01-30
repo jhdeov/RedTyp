@@ -15,7 +15,9 @@ Typological morphologists can utilize our database to get a rough picture on the
 
 More information on how 2-way FSTs work can be found in Filiot & Reynier (2016, "Transducers, logic and algebra for functions of finite words").
 
-Author names are anonymous. 
+More information can be found in Dolatian & Heinz 2019 ["RedTyp: A Database of Reduplication with Computational Models"](https://scholarworks.umass.edu/scil/vol2/iss1/3/)
+
+
 
 This repository contains the following  files:
 1. An SQL file "RedTyp.sql" which is a copy of the SQL database, RedTyp
