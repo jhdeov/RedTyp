@@ -5,9 +5,9 @@ RedTyp is an SQL database of morpho-phonologically reduplicative processes and t
 
 The utility of the database is twofold:
 
-1) It provides a representative typology of reduplication in natural language, a cross-linguistically common but understudied topic in computational linguistics
+1) It provides a representative typology of reduplication in natural language, a cross-linguistically common but understudied topic in computational linguistics.
 
-2) It provides a computational implementation for the typology of reduplication using 2-way finite-state transducers (2-way FSTs)
+2) It provides a computational implementation for the typology of reduplication using 2-way finite-state transducers (2-way FSTs).
 
 Computational morphologists can utilize our database to retrieve computational models for both common and uncommon reduplicative processes. 
 
@@ -15,26 +15,26 @@ Typological morphologists can utilize our database to get a rough picture on the
 
 More information on how 2-way FSTs work can be found in Filiot & Reynier (2016, "Transducers, logic and algebra for functions of finite words").
 
-More information can be found in Dolatian & Heinz 2019 ["RedTyp: A Database of Reduplication with Computational Models"](https://scholarworks.umass.edu/scil/vol2/iss1/3/)
+More information can be found in Dolatian & Heinz 2019 ["RedTyp: A Database of Reduplication with Computational Models"](https://scholarworks.umass.edu/scil/vol2/iss1/3/).
 
 
 
 This repository contains the following  files:
-1. An SQL file "RedTyp.sql" which is a copy of the SQL database, RedTyp
-2. A python file "two_way_interpreter.py" which can interpret the 2-way FST recipes that are found in RedTyp
-3. A markdown file "README.md" which is the README file
-4. A license file "LICENSE.md"
-5. A markdown file "instructions_on_recipe_creation.md" which has instructions on how to read and create 2-way FST recipes that can be interpreted by our python interpreter
+1. An SQL file "RedTyp.sql" which is a copy of the SQL database, RedTyp.
+2. A Python file "two_way_interpreter.py" which can interpret the 2-way FST recipes that are found in RedTyp.
+3. A markdown file "README.md" which is the README file.
+4. A license file "LICENSE.md".
+5. A markdown file "instructions_on_recipe_creation.md" which has instructions on how to read and create 2-way FST recipes that can be interpreted by our Python interpreter.
 
-The SQL database was created with phpmyadmin and it can imported into any SQL server.
+The SQL database was created with phpmyadmin and it can imported into any SQL server, such as the open-source [MariaDB](https://mariadb.org/) system.
 
-The python file is written in Python 3.0.
+The Python file is written in Python 3.0.
 
 # Installing and running RedTyp
 
-In order to see how the SQL database models and implements reduplication using 2-way FSTs, do the following steps:
+To see how the SQL database models and implements reduplication using 2-way FSTs, do the following steps:
 
-1. Import the SQL file into an sql server
+1. Import the SQL file into an SQL server, such as the open-source [MariaDB](https://mariadb.org/) system.
 
 ```bash
  $ mysql -u root -p
@@ -58,7 +58,7 @@ FROM `morphemes`
 
 >>		Agta 	diminutive   	Initial C
 
-4. If the user wants to run the 2-way FST for initial C reduplication in Agta, he first need to get the 2-way FST recipe for initial C reduplication.
+4. If you want to run the 2-way FST for initial C reduplication in Agta, then you first need to get the 2-way FST recipe for initial C reduplication.
 Do to so, run the following query.		
  
 ~~~~sql
@@ -70,12 +70,12 @@ WHERE `matches`.`morpheme ID`=`morphemes`.`morpheme ID` AND `matches`.`2-way FST
 This returns the "2-way FST recipe" attribute for Agta initial-C reduplication.
 The last three conditions in the above WHERE statement can be replaced with any other triple of "language", "function", and "default form name" that the user retrieved from step 3	
 
-5. Given the "2-way	FST recipe" attribute from step 4, copy and save its value as a textfile "FST_recipe.txt". The name can be changed
+5. Given the "2-way	FST recipe" attribute from step 4, copy and save its value as a textfile "FST_recipe.txt". The name can be changed.
 
-6. The user must create a textfile "input_strings.txt" which contains input strings for the 2-way FST which will be implement. The name can be changed. This textfile must be encoded with either ANSI or utf-8.
-Some 2-way FST recipes require that the input strings have whitespace separate between segments. This is the case when the function of the 2-way FST works over mutlicharacter symbols. The user must read the "Initial comments" section of the 2-way FST recipe file in order to check if this is so
+6. The user must create a textfile "input_strings.txt" which contains input strings for the 2-way FST which will be implemented. The name can be changed. This textfile must be encoded with either ANSI or utf-8.
+Some 2-way FST recipes require that the input strings have whitespaces that separate between segments. This is the case when the function of the 2-way FST works over mutlicharacter symbols. The user must read the "Initial comments" section of the 2-way FST recipe file in order to check if this is so.
 The "instructions_on_recipe_creation.txt" file provides more details on how to read 2-way FST recipes in the next section.
-For example for Agta initial-C reduplication, the 2-way FST recipe doesn't require that input symbols be separated by white space. The "input_strings.txt" can contain the following:
+For example for Agta initial-C reduplication, the 2-way FST recipe doesn't require that input symbols be separated by whitespace. The "input_strings.txt" can contain the following:
 
 >>pata\
 patak\
